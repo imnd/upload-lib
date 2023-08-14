@@ -1,0 +1,25 @@
+{
+  "type": "module",
+  "name": "imnd-upload",
+  "description": "upload tools",
+  "main": "upload.js",
+  "version": "1.0.2",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "imnd-ajax": "^1.0.1",
+    "imnd-dom": "^1.0.1"
+  },
+  "devDependencies": {
+    "vite": "^4.4.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/imnd/upload-lib.git"
+  },
+  "author": "imnd",
+  "license": "ISC"
+}
