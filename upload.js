@@ -153,4 +153,4 @@ const
   }
 ;
 
-export default { run, defaults };
+export { run, defaults };
