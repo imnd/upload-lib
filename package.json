@@ -3,7 +3,7 @@
   "name": "imnd-upload",
   "description": "upload tools",
   "main": "upload.js",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "imnd-ajax": "^1.0.1",
-    "imnd-dom": "^1.0.1"
+    "imnd-dom": "^1.0.3"
   },
   "devDependencies": {
     "vite": "^4.4.5"

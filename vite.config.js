@@ -6,7 +6,8 @@ const config = defineConfig({
     lib: {
       entry: path.resolve(__dirname, 'upload.js'),
       name: 'upload',
-      fileName: 'upload'
+      fileName: 'upload',
+      formats: ['es'],
     },
   }
 });

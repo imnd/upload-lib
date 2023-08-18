@@ -7,6 +7,8 @@
  *      <input type="button" id="file-upload" value="Отправить" />
  * </form>
  * <script>
+ * import { findById } from 'imnd-dom';
+ *
  * Upload.defaults({
  *     "chunk-size" : 120000,
  *     "file-id" : "file",
@@ -15,14 +17,14 @@
  *         ...
  *     },
  * });
- * dom.findById('file-upload').addEventListener('click', Upload.run, false);
+ * findById('file-upload').addEventListener('click', Upload.run, false);
  * </script>
  *
  * @constructor
  * @this  {upload}
  */
 
-import dom from 'imnd-dom';
+import { findById, find } from 'imnd-dom';
 import ajax from 'imnd-ajax';
 
 const
@@ -62,9 +64,7 @@ const
       stopByte = options["stopByte"],
       chunksCount = options["chunksCount"] || 0,
       fileNum = options["fileNum"] || 0,
-      reader = new FileReader()
-    ;
-    const
+      reader = new FileReader(),
       start = parseInt(startByte) || 0,
       stop = parseInt(stopByte) || file.size - 1
     ;
@@ -112,45 +112,57 @@ const
   }
 ;
 
-const
-  /**
-   * Загрузка файла по частям на сервер
-   *
-   * @return {void}
-   */
-  run = () => {
-    if (window.File && window.FileReader && window.FileList && window.Blob) {
-      const files = dom.findById(settings["file-id"]).files;
-      if (!files.length) {
-        alert("Выберите файл, пожалуйста.");
-        return;
-      }
-      const file = files[0],
-        chunksCount = Math.ceil(file.size / settings["chunk-size"]);
-      for (let fileNum = 0; fileNum < chunksCount; fileNum++) {
-        uploadBlob({
-          "file": file,
-          "startByte": settings["chunk-size"] * fileNum,
-          "stopByte": settings["chunk-size"] * (fileNum + 1),
-          "chunksCount": chunksCount,
-          "fileNum": fileNum,
-        });
-      }
-    }
-  },
+const upload = {
 
-  /**
-   * Установка значений параметров
-   *
-   * @param {obj} options параметры
-   * @return {void}
-   */
-  defaults = options => {
-    const varNames = ["file-id", "chunk-size", "upload-url", "complete-callback"];
-    for (const key in varNames) {
-      setValue(varNames[key], options);
-    }
+    /**
+     * Загрузка файла по частям на сервер
+     *
+     * @return {void}
+     */
+    run: () => {
+      if (window.File && window.FileReader && window.FileList && window.Blob) {
+        const files = findById(settings["file-id"]).files;
+        if (!files.length) {
+          alert("Выберите файл, пожалуйста.");
+          return;
+        }
+        const file = files[0],
+          chunksCount = Math.ceil(file.size / settings["chunk-size"]);
+        for (let fileNum = 0; fileNum < chunksCount; fileNum++) {
+          uploadBlob({
+            "file": file,
+            "startByte": settings["chunk-size"] * fileNum,
+            "stopByte": settings["chunk-size"] * (fileNum + 1),
+            "chunksCount": chunksCount,
+            "fileNum": fileNum,
+          });
+        }
+      }
+    },
+
+    /**
+     * Установка значений параметров
+     *
+     * @param options параметры
+     */
+    defaults: function (options) {
+      const varNames = ["file-id", "chunk-size", "upload-url", "complete-callback"];
+      for (let key in varNames) {
+        setValue(varNames[key], options);
+      }
+      return this;
+    },
+
+    /**
+     * Установка значений параметров
+     *
+     * @param selector
+     */
+    attach: (selector) => {
+      find(selector).addEventListener('click', this.run, false);
+    },
+
   }
 ;
 
-export { run, defaults };
+export default upload;
