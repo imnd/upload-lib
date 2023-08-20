@@ -1,23 +1,25 @@
 /**
- * Компонент работы с файлами
+ * File handling component
  *
- * Использование:
+ * Usage:
  * <form>
  *      <input type="file" id="file" />
  *      <input type="button" id="file-upload" value="Отправить" />
  * </form>
- * <script>
- * import { findById } from 'imnd-dom';
  *
- * Upload.defaults({
+ * <script>
+ * import upload from 'imnd-upload';
+ *
+ * upload
+ *   .defaults({
  *     "chunk-size" : 120000,
  *     "file-id" : "file",
  *     "upload-url" : "accept.php",
- *     "complete-callback" : function() {
- *         ...
+ *     "on-complete" : () => {
+ *       ...
  *     },
- * });
- * findById('file-upload').addEventListener('click', Upload.run, false);
+ *   })
+ * .attach('file-upload');
  * </script>
  *
  * @constructor
@@ -47,7 +49,7 @@ const
     /**
      * что делать после удачной загрузки
      */
-    "complete-callback": function () {
+    "on-complete": function () {
       alert("Готово");
     }
   },
@@ -81,7 +83,7 @@ const
         },
         function (data) {
           if (data.complete === true) {
-            settings["complete-callback"]();
+            settings["on-complete"]();
           }
         },
         "json",
@@ -146,7 +148,7 @@ const upload = {
      * @param options параметры
      */
     defaults: function (options) {
-      const varNames = ["file-id", "chunk-size", "upload-url", "complete-callback"];
+      const varNames = ["file-id", "chunk-size", "upload-url", "on-complete"];
       for (let key in varNames) {
         setValue(varNames[key], options);
       }
