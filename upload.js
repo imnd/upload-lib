@@ -1,5 +1,9 @@
 /**
  * File handling component
+ * @author Andrey Serdyuk imndsu@gmail.com
+ * @copyright (c) 2023 IMND
+ * @constructor
+ * @this  { upload }
  *
  * Usage:
  * <form>
@@ -21,59 +25,53 @@
  *   })
  * .attach('file-upload');
  * </script>
- *
- * @constructor
- * @this  {upload}
  */
 
-import { findById, find } from 'imnd-dom';
+import dom from 'imnd-dom';
 import ajax from 'imnd-ajax';
 
 const
-  /**
-   * параметры
-   */
-  settings = {
+  parameters = {
     /**
-     * путь обработчика загрузки
+     * api endpoint
      */
     "upload-url": "upload.php",
     /**
-     * id инпута файла
+     * file input id
      */
     "file-id": "file",
     /**
-     * размер кусков, на которые делится файл.
+     * the size of the chunks into which the file is divided
      */
     "chunk-size": 100000,
     /**
-     * что делать после удачной загрузки
+     * what to do after a successful download
      */
-    "on-complete": function () {
-      alert("Готово");
+    "on-complete": () => {
+      alert("Done");
     }
   },
   /**
-   * Считывание и загрузки фрагмента файла
+   * Reading and loading a fragment of a file
    *
-   * @param {array} options параметры
+   * @param {array} options
    * @return {void}
    */
   uploadBlob = function (options) {
     const
-      file = options["file"],
-      startByte = options["startByte"],
-      stopByte = options["stopByte"],
-      chunksCount = options["chunksCount"] || 0,
-      fileNum = options["fileNum"] || 0,
+      file = options.file,
+      startByte = options.startByte,
+      stopByte = options.stopByte,
+      chunksCount = options.chunksCount || 0,
+      fileNum = options.fileNum || 0,
       reader = new FileReader(),
       start = parseInt(startByte) || 0,
       stop = parseInt(stopByte) || file.size - 1
     ;
-    // если мы используем onloadend, нам нужно проверить readyState.
+    // if we use onloadend we need to check readyState.
     reader.onloadend = function () {
       ajax.post(
-        settings["upload-url"],
+        parameters["upload-url"],
         {
           "data": reader.result,
           "fileName": file.name,
@@ -81,9 +79,9 @@ const
           "chunksCount": chunksCount,
           "fileNum": fileNum,
         },
-        function (data) {
+        data => {
           if (data.complete === true) {
-            settings["on-complete"]();
+            parameters["on-complete"]();
           }
         },
         "json",
@@ -101,15 +99,15 @@ const
     reader.readAsDataURL(blob);
   },
   /**
-   * Установка значения параметра
+   * Setting the options value
    *
    * @param {string} varName
-   * @param {array} options параметры
+   * @param {array} options
    * @return {void}
    */
   setValue = function (varName, options) {
     if (options[varName] !== undefined) {
-      settings[varName] = options[varName];
+      parameters[varName] = options[varName];
     }
   }
 ;
@@ -123,18 +121,18 @@ const upload = {
      */
     run: () => {
       if (window.File && window.FileReader && window.FileList && window.Blob) {
-        const files = findById(settings["file-id"]).files;
+        const files = dom.findById(parameters["file-id"]).files;
         if (!files.length) {
           alert("Выберите файл, пожалуйста.");
           return;
         }
         const file = files[0],
-          chunksCount = Math.ceil(file.size / settings["chunk-size"]);
+          chunksCount = Math.ceil(file.size / parameters["chunk-size"]);
         for (let fileNum = 0; fileNum < chunksCount; fileNum++) {
           uploadBlob({
             "file": file,
-            "startByte": settings["chunk-size"] * fileNum,
-            "stopByte": settings["chunk-size"] * (fileNum + 1),
+            "startByte": parameters["chunk-size"] * fileNum,
+            "stopByte": parameters["chunk-size"] * (fileNum + 1),
             "chunksCount": chunksCount,
             "fileNum": fileNum,
           });
@@ -147,7 +145,7 @@ const upload = {
      *
      * @param options параметры
      */
-    defaults: function (options) {
+    defaults: options => {
       const varNames = ["file-id", "chunk-size", "upload-url", "on-complete"];
       for (let key in varNames) {
         setValue(varNames[key], options);
@@ -160,8 +158,8 @@ const upload = {
      *
      * @param selector
      */
-    attach: (selector) => {
-      find(selector).addEventListener('click', this.run, false);
+    attach: selector => {
+      dom.find(selector).addEventListener('click', this.run, false);
     },
 
   }
