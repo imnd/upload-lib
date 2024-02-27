@@ -1,5 +1,5 @@
 /**
- * File handling component
+ * File uploading component
  * @author Andrey Serdyuk imndsu@gmail.com
  * @copyright (c) 2023 IMND
  * @constructor
@@ -8,7 +8,7 @@
  * Usage:
  * <form>
  *      <input type="file" id="file" />
- *      <input type="button" id="file-upload" value="Отправить" />
+ *      <input type="button" id="file-upload" value="Send" />
  * </form>
  *
  * <script>
@@ -23,7 +23,7 @@
  *       ...
  *     },
  *   })
- * .attach('file-upload');
+ *   .attach('file-upload');
  * </script>
  */
 
@@ -37,7 +37,7 @@ const
      */
     "upload-url": "upload.php",
     /**
-     * file input id
+     * file input element id
      */
     "file-id": "file",
     /**
@@ -47,9 +47,7 @@ const
     /**
      * what to do after a successful download
      */
-    "on-complete": () => {
-      alert("Done");
-    }
+    "on-complete": () => alert("Done")
   },
   /**
    * Reading and loading a fragment of a file
@@ -113,15 +111,14 @@ const
 ;
 
 const upload = {
-
     /**
-     * Загрузка файла по частям на сервер
+     * Uploading a file in parts to the server
      *
      * @return {void}
      */
     run: () => {
       if (window.File && window.FileReader && window.FileList && window.Blob) {
-        const files = dom.findById(parameters["file-id"]).files;
+        const files = dom().findById(parameters["file-id"]).files;
         if (!files.length) {
           alert("Выберите файл, пожалуйста.");
           return;
@@ -141,9 +138,9 @@ const upload = {
     },
 
     /**
-     * Установка значений параметров
+     * Setting options values
      *
-     * @param options параметры
+     * @param options
      */
     defaults: options => {
       const varNames = ["file-id", "chunk-size", "upload-url", "on-complete"];
@@ -154,14 +151,11 @@ const upload = {
     },
 
     /**
-     * Установка значений параметров
-     *
      * @param selector
      */
     attach: selector => {
-      dom.find(selector).addEventListener('click', this.run, false);
+      dom().find(selector).addEventListener('click', this.run, false);
     },
-
   }
 ;
 
